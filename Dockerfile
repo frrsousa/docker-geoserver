@@ -17,9 +17,9 @@ RUN mkdir -p ${GEOSERVER_DATA_DIR} && chmod -R 777 ${GEOSERVER_DATA_DIR}
 USER root
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# Download do WAR direto do GeoServer
+# Download do WAR real do GeoServer
 WORKDIR /usr/local/tomcat/webapps
-RUN curl -L -o geoserver.war "https://downloads.sourceforge.net/project/geoserver/GeoServer/2.27.2/geoserver-2.27.2-war.zip/download?direct"
+RUN curl -L -o geoserver.war "https://artifacts.boundlessgeo.com/geoserver/2.27.2/geoserver-2.27.2-war.war"
 
 # Expor porta usada pelo Render
 EXPOSE 8080
