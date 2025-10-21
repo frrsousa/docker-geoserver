@@ -29,3 +29,4 @@ RUN rm -rf $CATALINA_HOME/webapps/geoserver/web && \
 EXPOSE 8080
 
 CMD ["catalina.sh", "run"]
+RUN ls -l /usr/local/tomcat/webapps/
