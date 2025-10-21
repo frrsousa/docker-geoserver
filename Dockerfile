@@ -1,6 +1,6 @@
 # --------------------------
 # Dockerfile leve para Render Free
-# GeoServer core apenas, para WMS
+# Apenas GeoServer core para WMS
 # --------------------------
 
 FROM tomcat:9-jdk17
@@ -13,16 +13,16 @@ ENV JAVA_OPTS="-Xms256m -Xmx480m -XX:+UseG1GC"
 # Criar diretório de dados (permissões abertas)
 RUN mkdir -p ${GEOSERVER_DATA_DIR} && chmod -R 777 ${GEOSERVER_DATA_DIR}
 
-# Instalar curl (necessário para download do WAR)
+# Instalar curl
 USER root
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 
-# Baixar WAR direto do GeoServer
+# Download do WAR direto do GeoServer
 WORKDIR /usr/local/tomcat/webapps
-RUN curl -L -o geoserver.war "https://sourceforge.net/projects/geoserver/files/GeoServer/2.27.2/geoserver-2.27.2-war.zip/download"
+RUN curl -L -o geoserver.war "https://downloads.sourceforge.net/project/geoserver/GeoServer/2.27.2/geoserver-2.27.2-war.zip/download?direct"
 
-# Expor porta do Render
+# Expor porta usada pelo Render
 EXPOSE 8080
 
-# Arranque com delay para evitar timeout no Render
+# Arranque com delay para evitar timeout no Render Free
 CMD ["sh", "-c", "sleep 20 && catalina.sh run -Dport.http=$PORT"]
