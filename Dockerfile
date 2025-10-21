@@ -1,28 +1,11 @@
-# --------------------------
-# Dockerfile leve para Render Free
-# Apenas GeoServer core para WMS
-# --------------------------
+# Dockerfile Render Free usando Kartoza GeoServer
+FROM kartoza/geoserver:2.27.2
 
-FROM tomcat:9-jdk17
-
-# Variáveis de ambiente
+# Define o diretório de dados (opcional)
 ENV GEOSERVER_DATA_DIR=/opt/geoserver/data_dir
-ENV PORT=8080
-ENV JAVA_OPTS="-Xms256m -Xmx480m -XX:+UseG1GC"
 
-# Criar diretório de dados (permissões abertas)
-RUN mkdir -p ${GEOSERVER_DATA_DIR} && chmod -R 777 ${GEOSERVER_DATA_DIR}
-
-# Instalar curl
-USER root
-RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
-
-# Download do WAR real do GeoServer
-WORKDIR /usr/local/tomcat/webapps
-RUN curl -L -o geoserver.war "https://artifacts.boundlessgeo.com/geoserver/2.27.2/geoserver-2.27.2-war.war"
-
-# Expor porta usada pelo Render
+# Expor a porta usada pelo Render
 EXPOSE 8080
 
-# Arranque com delay para evitar timeout no Render Free
-CMD ["sh", "-c", "sleep 20 && catalina.sh run -Dport.http=$PORT"]
+# Arranque padrão do GeoServer
+CMD ["catalina.sh", "run"]
