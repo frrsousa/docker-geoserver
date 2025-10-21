@@ -16,14 +16,14 @@ RUN curl -fsSL https://archive.apache.org/dist/tomcat/tomcat-9/v9.0.80/bin/apach
     mv /usr/local/apache-tomcat-9.0.80 $CATALINA_HOME && \
     rm -rf /tmp/*
 
-# Download e extração do GeoServer WAR
+# Fazer download direto do GeoServer WAR (mirror SourceForge)
 RUN mkdir -p $CATALINA_HOME/webapps/geoserver && \
-    curl -L -o /tmp/geoserver.zip https://build.geoserver.org/geoserver/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip && \
-    unzip -o /tmp/geoserver.zip -d /tmp && \
+    curl -L -o /tmp/geoserver-war.zip "https://downloads.sourceforge.net/project/geoserver/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip" && \
+    unzip -o /tmp/geoserver-war.zip -d /tmp && \
     unzip -o /tmp/geoserver.war -d $CATALINA_HOME/webapps/geoserver && \
     rm -rf /tmp/*
 
-# Desativar GeoWebCache (reduz memória)
+# Desativar GeoWebCache (reduz uso de memória)
 RUN mkdir -p $CATALINA_HOME/webapps/geoserver/WEB-INF/classes && \
     echo "GEOWEBCACHE_DISABLED=true" > $CATALINA_HOME/webapps/geoserver/WEB-INF/classes/geowebcache.properties
 
