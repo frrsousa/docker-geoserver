@@ -1,1 +1,5 @@
-
+<workspace>
+  <id>default</id>
+  <name>default</name>
+  <isolated>false</isolated>
+</workspace>
