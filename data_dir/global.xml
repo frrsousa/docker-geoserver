@@ -1,1 +1,8 @@
+<global>
+  <settings>
+    <contact>
+      <contactEmail>admin@example.com</contactEmail>
+    </contact>
+  </settings>
+</global>
 
