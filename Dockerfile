@@ -28,7 +28,7 @@ RUN rm -rf ${GEOSERVER_HOME}/doc ${GEOSERVER_HOME}/demo
 COPY data_dir ${GEOSERVER_HOME}/data_dir
 
 # Copiar web.xml modificado com CORS
-COPY web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
+COPY web-inf/web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
 
 # Expor porta padrão do Tomcat
 EXPOSE 8080
