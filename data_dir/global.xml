@@ -4,5 +4,7 @@
       <contactEmail>admin@example.com</contactEmail>
     </contact>
   </settings>
+  <logging>
+    <level>INFO</level>
+  </logging>
 </global>
-
