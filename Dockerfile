@@ -1,7 +1,7 @@
 # ────────────────────────────────────────────────
 # GeoServer Lite – otimizado para Render (512 MB)
 # ────────────────────────────────────────────────
-FROM eclipse-temurin:17-jre-slim
+FROM openjdk:17-jdk-slim
 
 ENV GEOSERVER_VERSION=2.24.2
 ENV GEOSERVER_HOME=/usr/local/geoserver
