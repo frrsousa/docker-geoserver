@@ -7,7 +7,7 @@ ENV FILE_ID="1qFt0uIuK0aVz60kVK-rm07zo_vH3sYFa"
 RUN apt-get update && apt-get install -y wget unzip
 
 # Download do WAR do Google Drive
-UN wget --no-check-certificate "https://drive.google.com/uc?export=download&id=${FILE_ID}" -O /tmp/geoserver.war
+RUN wget --no-check-certificate "https://drive.google.com/uc?export=download&id=${FILE_ID}" -O /tmp/geoserver.war
 
 # Descompactar o WAR dentro do Tomcat
 RUN mkdir -p /usr/local/tomcat/webapps/geoserver && \
