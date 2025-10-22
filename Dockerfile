@@ -1,36 +1,33 @@
 # ────────────────────────────────────────────────
 # GeoServer Lite – otimizado para Render (512 MB)
 # ────────────────────────────────────────────────
-FROM openjdk:17-jdk-slim
+FROM tomcat:9.0.111-jdk17
 
-ENV GEOSERVER_VERSION=2.24.2
-ENV GEOSERVER_HOME=/usr/local/geoserver
-ENV JAVA_OPTS="-Xms128m -Xmx384m"
+ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver
 
-# Instalar dependências mínimas
+# Instalar wget e unzip para descarregar e extrair o WAR
 RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/*
 
-# Criar diretórios
-RUN mkdir -p ${GEOSERVER_HOME}/webapps/geoserver
+# Criar diretório GeoServer
+RUN mkdir -p ${GEOSERVER_HOME}
 
-# Descarregar e extrair apenas o WAR
-RUN wget -O /tmp/geoserver.zip https://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip/download && \
+# Descarregar WAR oficial do GeoServer
+RUN wget -O /tmp/geoserver.zip https://sourceforge.net/projects/geoserver/files/GeoServer/2.24.2/geoserver-2.24.2-war.zip/download && \
     unzip /tmp/geoserver.zip -d /tmp/geoserver && \
     mv /tmp/geoserver/geoserver.war ${GEOSERVER_HOME}/geoserver.war && \
     rm -rf /tmp/geoserver /tmp/geoserver.zip
 
-# Descompactar e limpar conteúdo desnecessário
-RUN unzip ${GEOSERVER_HOME}/geoserver.war -d ${GEOSERVER_HOME}/webapps/geoserver && \
+# Descompactar WAR e remover conteúdo pesado desnecessário
+RUN unzip ${GEOSERVER_HOME}/geoserver.war -d ${GEOSERVER_HOME} && \
     rm ${GEOSERVER_HOME}/geoserver.war && \
-    rm -rf ${GEOSERVER_HOME}/webapps/geoserver/doc ${GEOSERVER_HOME}/webapps/geoserver/data ${GEOSERVER_HOME}/webapps/geoserver/demo
+    rm -rf ${GEOSERVER_HOME}/doc ${GEOSERVER_HOME}/demo
 
-# Copiar data_dir mínimo
+# Copiar o data_dir mínimo que tens
 COPY data_dir ${GEOSERVER_HOME}/data_dir
 
-# Porta padrão do GeoServer
+# Expor porta do Tomcat
 EXPOSE 8080
 
-WORKDIR ${GEOSERVER_HOME}/webapps/geoserver
-
-# Iniciar GeoServer
-CMD ["java", "-jar", "start.jar"]
+# Arrancar Tomcat
+WORKDIR /usr/local/tomcat
+CMD ["catalina.sh", "run"]
