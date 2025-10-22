@@ -18,14 +18,17 @@ RUN wget -O /tmp/geoserver.zip https://sourceforge.net/projects/geoserver/files/
     mv /tmp/geoserver/geoserver.war /tmp/geoserver.war && \
     rm -rf /tmp/geoserver /tmp/geoserver.zip
 
-# Descompactar WAR dentro do contexto geoserver
+# Descompactar WAR dentro do contexto GeoServer
 RUN unzip /tmp/geoserver.war -d ${GEOSERVER_HOME} && rm /tmp/geoserver.war
 
 # Remover conteúdos pesados desnecessários (docs, demo)
 RUN rm -rf ${GEOSERVER_HOME}/doc ${GEOSERVER_HOME}/demo
 
-# Copiar data_dir mínimo para dentro do GeoServer
+# Copiar data_dir mínimo
 COPY data_dir ${GEOSERVER_HOME}/data_dir
+
+# Copiar web.xml modificado com CORS
+COPY web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
 
 # Expor porta padrão do Tomcat
 EXPOSE 8080
@@ -35,3 +38,4 @@ WORKDIR /usr/local/tomcat
 
 # Arrancar Tomcat
 CMD ["catalina.sh", "run"]
+
