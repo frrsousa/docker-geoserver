@@ -1,1 +1,6 @@
+<security>
+  <roleServiceName>default</roleServiceName>
+  <authProviderName>default</authProviderName>
+  <passwordEncoder>plain</passwordEncoder>
+</security>
 
