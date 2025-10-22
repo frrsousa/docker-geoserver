@@ -1,15 +1,18 @@
-# Usar Tomcat 9 com JDK17
 FROM tomcat:9.0.111-jdk17
 
-# Variável para o ID do ficheiro Google Drive
-ARG GEOSERVER_WAR_ID=1qFt0uIuK0aVz60kVK-rm07zo_vH3sYFa
+# Variável com ID do ficheiro do Google Drive
+ENV FILE_ID="1qFt0uIuK0aVz60kVK-rm07zo_vH3sYFa"
 
-# Criar pasta geoserver (Lite)
-RUN mkdir -p /usr/local/tomcat/webapps/geoserver
+# Instalar wget e unzip
+RUN apt-get update && apt-get install -y wget unzip
 
-# Baixar WAR do Google Drive para a pasta webapps
-# Nota: substituir SEU_FILE_ID pelo ID real do ficheiro
-RUN curl -L -o /usr/local/tomcat/webapps/geoserver.war "https://drive.google.com/uc?export=download&id=${GEOSERVER_WAR_ID}"
+# Download do WAR do Google Drive
+RUN wget --no-check-certificate "https://drive.google.com/uc?export=download&id=${FILE_ID}" -O /tmp/geoserver.war
+
+# Descompactar o WAR dentro do Tomcat
+RUN mkdir -p /usr/local/tomcat/webapps/geoserver && \
+    unzip /tmp/geoserver.war -d /usr/local/tomcat/webapps/geoserver && \
+    rm /tmp/geoserver.war
 
 # Expor porta HTTP
 EXPOSE 8080
