@@ -1,15 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <logging>
+  <!-- Nome da configuração -->
   <level>INFO</level>
+
+  <!-- Caminho relativo para o ficheiro de logs -->
   <location>logs/geoserver.log</location>
-  <stdOutLogging>false</stdOutLogging>
-  <loggingProfiles>
-    <loggingProfile>
-      <id>DEFAULT_LOGGING</id>
-      <name>Default</name>
-      <level>INFO</level>
-      <filename>logs/geoserver.log</filename>
-      <stdOutLogging>false</stdOutLogging>
-    </loggingProfile>
-  </loggingProfiles>
-  <loggingProfileId>DEFAULT_LOGGING</loggingProfileId>
+
+  <!-- Se true, o log será também enviado para stdout (útil no Render) -->
+  <stdOutLogging>true</stdOutLogging>
+
+  <!-- Mantém os logs simples e evita conflitos de permissões -->
+  <rotate>false</rotate>
+  <retentionDays>7</retentionDays>
+
+  <!-- Categoria de logs principal -->
+  <log4jConfig>
+    <![CDATA[
+      log4j.rootLogger=INFO, geoserverlog, stdout
+
+      log4j.appender.geoserverlog=org.apache.log4j.FileAppender
+      log4j.appender.geoserverlog.File=logs/geoserver.log
+      log4j.appender.geoserverlog.layout=org.apache.log4j.PatternLayout
+      log4j.appender.geoserverlog.layout.ConversionPattern=%d %-5p [%t] %c - %m%n
+
+      log4j.appender.stdout=org.apache.log4j.ConsoleAppender
+      log4j.appender.stdout.layout=org.apache.log4j.PatternLayout
+      log4j.appender.stdout.layout.ConversionPattern=%d %-5p %c - %m%n
+    ]]>
+  </log4jConfig>
 </logging>
