@@ -1,29 +1,42 @@
-# Imagem base estável do GeoServer
-FROM geoserver/geoserver:2.24.2
+FROM tomcat:9.0.111-jdk17
 
-# Define variáveis de ambiente essenciais
-ENV GEOSERVER_DATA_DIR=/opt/geoserver/data_dir \
-    GEOSERVER_LOG_LOCATION=/opt/geoserver/data_dir/logs/geoserver.log \
-    JAVA_OPTS="-Xms512m -Xmx1g -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+ENV GEOSERVER_VERSION=2.24.2
+ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver
+ENV GEOSERVER_DATA_DIR=${GEOSERVER_HOME}/data_dir
 
-# Copia o diretório de dados preparado localmente
-COPY data_dir /opt/geoserver/data_dir
+# Instalar wget e unzip
+RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/*
 
-# Garante que o diretório de logs existe (sem necessidade de chmod)
-RUN mkdir -p /opt/geoserver/data_dir/logs && \
-    touch /opt/geoserver/data_dir/logs/geoserver.log && \
-    chown -R root:root /opt/geoserver/data_dir && \
-    echo "Estrutura de dados copiada com sucesso."
+# Limpar e criar diretórios
+RUN rm -rf ${GEOSERVER_HOME} && mkdir -p ${GEOSERVER_HOME} ${GEOSERVER_DATA_DIR}/logs
 
-# Define permissões compatíveis com o Render (sem comandos diretos)
-RUN find /opt/geoserver/data_dir -type d -exec chmod 755 {} \; && \
-    find /opt/geoserver/data_dir -type f -exec chmod 644 {} \;
+# Descarregar WAR oficial do GeoServer
+RUN wget -O /tmp/geoserver.zip "https://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip/download" && \
+    unzip /tmp/geoserver.zip -d /tmp/geoserver && \
+    mv /tmp/geoserver/geoserver.war /tmp/geoserver.war && \
+    rm -rf /tmp/geoserver /tmp/geoserver.zip
 
-# Define o diretório de trabalho
-WORKDIR /opt/geoserver
+# Descompactar WAR dentro do GeoServer
+RUN unzip /tmp/geoserver.war -d ${GEOSERVER_HOME} && rm /tmp/geoserver.war
 
-# Expõe a porta padrão do GeoServer
+# Remover conteúdos pesados desnecessários
+RUN rm -rf ${GEOSERVER_HOME}/doc ${GEOSERVER_HOME}/demo
+
+# Copiar data_dir completo
+COPY data_dir ${GEOSERVER_DATA_DIR}
+
+# Garantir logs vazios
+RUN touch ${GEOSERVER_DATA_DIR}/logs/geoserver.log
+
+# Expor porta padrão do Tomcat
 EXPOSE 8080
 
-# Define o comando de arranque
-CMD ["sh", "-c", "exec /usr/local/tomcat/bin/catalina.sh run"]
+# Definir diretório de trabalho
+WORKDIR /usr/local/tomcat
+
+# Definir variável para apontar data_dir
+ENV CATALINA_OPTS="-DGEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR}"
+
+# Arrancar Tomcat
+CMD ["catalina.sh", "run"]
+
