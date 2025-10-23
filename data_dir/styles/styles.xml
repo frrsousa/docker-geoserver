@@ -1,1 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<styles>
+  <style>
+    <id>default_polygon</id>
+    <filename>default_polygon.sld</filename>
+  </style>
+  <style>
+    <id>default_line</id>
+    <filename>default_line.sld</filename>
+  </style>
+  <style>
+    <id>default_point</id>
+    <filename>default_point.sld</filename>
+  </style>
+</styles>
 
