@@ -1,4 +1,6 @@
-<roles>
-  <role id="ADMIN">admin</role>
-</roles>
-
+<roleRegistry>
+  <role id="ADMIN"/>
+  <userRoles username="admin">
+    <roleRef id="ADMIN"/>
+  </userRoles>
+</roleRegistry>
