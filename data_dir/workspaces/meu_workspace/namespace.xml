@@ -1,5 +1,6 @@
-<namespace>
-  <id>NamespaceInfoImpl-1</id>
-  <prefix>meu_workspace</prefix>
-  <uri>http://localhost:8080/geoserver/meu_workspace</uri>
-</namespace>
+<workspace>
+  <id>WorkspaceInfoImpl-1</id>
+  <name>meu_workspace</name>
+  <isolated>false</isolated>
+  <enabled>true</enabled>
+</workspace>
