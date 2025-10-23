@@ -1,5 +1,5 @@
 # ────────────────────────────────────────────────
-# GeoServer Lite – com workspace pronto para Render
+# GeoServer Lite – otimizado para Render (512 MB)
 # ────────────────────────────────────────────────
 FROM tomcat:9.0.111-jdk17
 
@@ -25,16 +25,20 @@ RUN unzip /tmp/geoserver.war -d ${GEOSERVER_HOME} && rm /tmp/geoserver.war
 # Remover conteúdos pesados desnecessários
 RUN rm -rf ${GEOSERVER_HOME}/doc ${GEOSERVER_HOME}/demo
 
-# Copiar data_dir com workspace pronto
-COPY data_dir ${GEOSERVER_DATA_DIR}
+# Criar pastas mínimas do data_dir
+RUN mkdir -p ${GEOSERVER_DATA_DIR}/logs \
+    ${GEOSERVER_DATA_DIR}/styles \
+    ${GEOSERVER_DATA_DIR}/workspaces/meu_workspace \
+    && chmod -R 777 ${GEOSERVER_DATA_DIR} \
+    && chown -R root:root ${GEOSERVER_HOME}
 
-# Ajustar permissões para evitar erros 400
-RUN chmod -R 777 ${GEOSERVER_DATA_DIR} && \
-    chmod -R 755 ${GEOSERVER_HOME} && \
-    chown -R root:root ${GEOSERVER_HOME}
+# Copiar data_dir mínimo para dentro do GeoServer
+COPY data_dir/ ${GEOSERVER_DATA_DIR}/
 
-# Limpar logs antigos
-RUN rm -f ${GEOSERVER_DATA_DIR}/logs/geoserver.log
+# Definir variáveis no Tomcat
+ENV CATALINA_OPTS="-DGEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR} \
+    -DGEOSERVER_PROJ_DATA_DIR=${GEOSERVER_DATA_DIR}/proj \
+    -DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver"
 
 # Expor porta padrão do Tomcat
 EXPOSE 8080
@@ -42,5 +46,6 @@ EXPOSE 8080
 # Definir diretório de trabalho
 WORKDIR /usr/local/tomcat
 
-# Arrancar Tomcat no foreground
+# Arrancar Tomcat
 CMD ["catalina.sh", "run"]
+
