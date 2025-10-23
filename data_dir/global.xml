@@ -1,10 +1,17 @@
 <global>
-  <settings>
-    <contact>
-      <contactEmail>admin@example.com</contactEmail>
-    </contact>
-  </settings>
-  <logging>
-    <level>INFO</level>
-  </logging>
+  <jai>
+    <allowNativeMosaic>false</allowNativeMosaic>
+    <allowNativeWarp>false</allowNativeWarp>
+    <recycling>false</recycling>
+    <tilePriority>5</tilePriority>
+    <tileThreads>4</tileThreads>
+    <memoryCapacity>0.5</memoryCapacity>
+    <memoryThreshold>0.75</memoryThreshold>
+  </jai>
+  <coverageAccess>
+    <maxPoolSize>4</maxPoolSize>
+    <corePoolSize>2</corePoolSize>
+    <keepAliveTime>30000</keepAliveTime>
+    <queueType>DIRECT</queueType>
+  </coverageAccess>
 </global>
