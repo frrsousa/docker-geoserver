@@ -1,5 +1,5 @@
 <workspace>
-  <id>default</id>
-  <name>default</name>
-  <isolated>false</isolated>
+    <id>1</id>
+    <name>default</name>
+    <enabled>true</enabled>
 </workspace>
