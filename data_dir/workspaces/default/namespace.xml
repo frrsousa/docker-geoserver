@@ -1,5 +1,4 @@
 <namespace>
-  <id>default</id>
-  <prefix>default</prefix>
-  <uri>http://www.geoserver.org/default</uri>
+    <prefix>default</prefix>
+    <uri>http://www.openplans.org/geoserver</uri>
 </namespace>
