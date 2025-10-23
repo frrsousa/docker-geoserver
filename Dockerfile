@@ -1,49 +1,50 @@
 # ────────────────────────────────────────────────
-# BASE IMAGE
+# GeoServer Lite – otimizado para Render (512 MB)
+# Corrigido para permissões e workspace pré-carregado
 # ────────────────────────────────────────────────
-FROM tomcat:9-jdk17-temurin
+FROM tomcat:9.0.111-jdk17
 
-# ────────────────────────────────────────────────
-# VARIÁVEIS DE AMBIENTE
-# ────────────────────────────────────────────────
-ENV GEOSERVER_VERSION=2.23.2
+ENV GEOSERVER_VERSION=2.24.2
 ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver
 ENV GEOSERVER_DATA_DIR=${GEOSERVER_HOME}/data_dir
-ENV CATALINA_OPTS="-Xms512m -Xmx1024m -DGEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR} -Dshutdown.port=-1"
 
-# ────────────────────────────────────────────────
-# INSTALA DEPENDÊNCIAS
-# ────────────────────────────────────────────────
-RUN apt-get update && apt-get install -y wget unzip && apt-get clean
+# Instalar wget e unzip
+RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/*
 
-# ────────────────────────────────────────────────
-# INSTALA GEOSERVER
-# ────────────────────────────────────────────────
-RUN wget -q https://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip && \
-    unzip geoserver-${GEOSERVER_VERSION}-war.zip -d /tmp/geoserver && \
-    mv /tmp/geoserver/geoserver.war ${CATALINA_HOME}/webapps/geoserver.war && \
-    rm -rf /tmp/geoserver geoserver-${GEOSERVER_VERSION}-war.zip
+# Garantir diretório limpo e preparado
+RUN rm -rf ${GEOSERVER_HOME} && mkdir -p ${GEOSERVER_DATA_DIR}
 
-# ────────────────────────────────────────────────
-# COPIAR DATA_DIR PERSONALIZADO
-# ────────────────────────────────────────────────
+# Descarregar WAR oficial do GeoServer
+RUN wget -O /tmp/geoserver.zip https://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip/download && \
+    unzip /tmp/geoserver.zip -d /tmp/geoserver && \
+    mv /tmp/geoserver/geoserver.war /tmp/geoserver.war && \
+    rm -rf /tmp/geoserver /tmp/geoserver.zip
+
+# Descompactar WAR dentro do contexto geoserver
+RUN unzip /tmp/geoserver.war -d ${GEOSERVER_HOME} && rm /tmp/geoserver.war
+
+# Remover conteúdos desnecessários (docs, demos)
+RUN rm -rf ${GEOSERVER_HOME}/doc ${GEOSERVER_HOME}/demo
+
+# Copiar data_dir mínimo
 COPY data_dir ${GEOSERVER_DATA_DIR}
 
 # ────────────────────────────────────────────────
-# GARANTIR PERMISSÕES ADEQUADAS
+# Corrigir permissões para o Render (sem shell)
 # ────────────────────────────────────────────────
-RUN mkdir -p ${GEOSERVER_DATA_DIR}/logs && \
-    chmod -R 777 ${GEOSERVER_DATA_DIR} && \
-    chmod -R 755 ${GEOSERVER_HOME} && \
-    chown -R root:root ${GEOSERVER_HOME}
+RUN chmod -R 777 ${GEOSERVER_DATA_DIR} || true
+RUN chmod -R 755 ${GEOSERVER_HOME} || true
 
-# ────────────────────────────────────────────────
-# CONFIGURAÇÕES DE REDE
-# ────────────────────────────────────────────────
+# Variáveis de ambiente obrigatórias
+ENV CATALINA_OPTS="-DGEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR} \
+                   -DGEOSERVER_PROJ_DATA_DIR=${GEOSERVER_DATA_DIR}/proj \
+                   -DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver"
+
+# Expor porta padrão
 EXPOSE 8080
 
-# ────────────────────────────────────────────────
-# INICIAR TOMCAT
-# ────────────────────────────────────────────────
+# Definir diretório de trabalho e iniciar Tomcat
+WORKDIR /usr/local/tomcat
 CMD ["catalina.sh", "run"]
+
 
