@@ -1,3 +1,3 @@
-<users>
-  <user enabled="true" name="admin" password="geoserver" />
-</users>
+<userRegistry>
+  <user name="admin" password="crypt1:geoserver" enabled="true"/>
+</userRegistry>
