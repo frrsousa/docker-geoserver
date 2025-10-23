@@ -1,4 +1,5 @@
 <namespace>
-  <prefix>default</prefix>
-  <uri>http://www.openplans.org/topp</uri>
+  <id>meu_workspace</id>
+  <prefix>meu_workspace</prefix>
+  <uri>http://localhost/geoserver/meu_workspace</uri>
 </namespace>
