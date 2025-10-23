@@ -1,5 +1,15 @@
 <logging>
   <level>INFO</level>
   <location>logs/geoserver.log</location>
-  <stdOutLogging>true</stdOutLogging>
+  <stdOutLogging>false</stdOutLogging>
+  <loggingProfiles>
+    <loggingProfile>
+      <id>DEFAULT_LOGGING</id>
+      <name>Default</name>
+      <level>INFO</level>
+      <filename>logs/geoserver.log</filename>
+      <stdOutLogging>false</stdOutLogging>
+    </loggingProfile>
+  </loggingProfiles>
+  <loggingProfileId>DEFAULT_LOGGING</loggingProfileId>
 </logging>
