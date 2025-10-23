@@ -1,5 +1,5 @@
 # Imagem base estável do GeoServer
-FROM geoserver/geoserver:2.25.2
+FROM geoserver/geoserver:2.24.2
 
 # Define variáveis de ambiente essenciais
 ENV GEOSERVER_DATA_DIR=/opt/geoserver/data_dir \
