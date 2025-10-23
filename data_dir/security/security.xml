@@ -1,6 +1,4 @@
 <security>
-  <roleServiceName>default</roleServiceName>
-  <authProviderName>default</authProviderName>
-  <passwordEncoder>plain</passwordEncoder>
+  <passwordEncoder>crypt1</passwordEncoder>
+  <masterPasswordProviderName>default</masterPasswordProviderName>
 </security>
-
