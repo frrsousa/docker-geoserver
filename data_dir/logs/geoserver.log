@@ -1,2 +1,0 @@
-echo "=== GeoServer log iniciado ===" > /var/local/geoserver_data/logs/geoserver.log
-
