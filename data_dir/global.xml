@@ -1,17 +1,13 @@
 <global>
   <jai>
-    <allowNativeMosaic>false</allowNativeMosaic>
-    <allowNativeWarp>false</allowNativeWarp>
-    <recycling>false</recycling>
-    <tilePriority>5</tilePriority>
+    <allowNativeMosaic>true</allowNativeMosaic>
+    <recycling>true</recycling>
     <tileThreads>4</tileThreads>
     <memoryCapacity>0.5</memoryCapacity>
     <memoryThreshold>0.75</memoryThreshold>
+    <imageIOCache>true</imageIOCache>
   </jai>
-  <coverageAccess>
-    <maxPoolSize>4</maxPoolSize>
-    <corePoolSize>2</corePoolSize>
-    <keepAliveTime>30000</keepAliveTime>
-    <queueType>DIRECT</queueType>
-  </coverageAccess>
+  <xmlPostRequestLogBufferSize>1024</xmlPostRequestLogBufferSize>
+  <verbose>false</verbose>
+  <verboseExceptions>true</verboseExceptions>
 </global>
