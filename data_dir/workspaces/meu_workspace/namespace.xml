@@ -1,6 +1,5 @@
-<workspace>
-  <id>WorkspaceInfoImpl-1</id>
-  <name>meu_workspace</name>
-  <isolated>false</isolated>
-  <enabled>true</enabled>
-</workspace>
+<namespace>
+  <id>NamespaceInfoImpl-1</id>
+  <prefix>meu_workspace</prefix>
+  <uri>https://docker-geoserver-qmk6.onrender.com/geoserver/meu_workspace</uri>
+</namespace>
