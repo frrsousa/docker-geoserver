@@ -1,3 +1,7 @@
-<userRegistry>
-  <user name="admin" password="crypt1:geoserver" enabled="true"/>
-</userRegistry>
+<userRoles>
+  <user username="admin" password="crypt1:9bc5d3bfcfddff0d" enabled="true"/>
+  <user username="anonymous" password="" enabled="false"/>
+  <role name="ADMIN"/>
+  <role name="READER"/>
+  <userRoleRef user="admin" role="ADMIN"/>
+</userRoles>
