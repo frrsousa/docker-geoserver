@@ -8,9 +8,9 @@ ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver
 ENV GEOSERVER_DATA_DIR=${GEOSERVER_HOME}/data_dir
 
 # Instalar wget e unzip
-RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y wget unzip curl && rm -rf /var/lib/apt/lists/*
 
-# Garantir diretório GeoServer limpo
+# Garantir diretório limpo
 RUN rm -rf ${GEOSERVER_HOME} && mkdir -p ${GEOSERVER_HOME}
 
 # Descarregar WAR oficial do GeoServer
@@ -33,8 +33,8 @@ RUN chmod -R 777 ${GEOSERVER_DATA_DIR} && \
     chmod -R 755 ${GEOSERVER_HOME} && \
     chown -R root:root ${GEOSERVER_HOME}
 
-# Definir variáveis no contexto Tomcat
-ENV CATALINA_OPTS="-DGEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR} -DGEOSERVER_PROJ_DATA_DIR=${GEOSERVER_DATA_DIR}/proj -DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver"
+# Limpar logs antigos
+RUN rm -f ${GEOSERVER_DATA_DIR}/logs/geoserver.log
 
 # Expor porta padrão do Tomcat
 EXPOSE 8080
@@ -42,5 +42,5 @@ EXPOSE 8080
 # Definir diretório de trabalho
 WORKDIR /usr/local/tomcat
 
-# Arrancar Tomcat
+# Arrancar Tomcat no foreground
 CMD ["catalina.sh", "run"]
