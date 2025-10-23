@@ -1,4 +1,6 @@
 <workspace>
-  <id>meu_workspace</id>
+  <id>WorkspaceInfoImpl-1</id>
   <name>meu_workspace</name>
+  <isolated>false</isolated>
+  <enabled>true</enabled>
 </workspace>
