@@ -1,13 +1,20 @@
 <global>
-  <jai>
-    <allowNativeMosaic>true</allowNativeMosaic>
-    <recycling>true</recycling>
-    <tileThreads>4</tileThreads>
-    <memoryCapacity>0.5</memoryCapacity>
-    <memoryThreshold>0.75</memoryThreshold>
-    <imageIOCache>true</imageIOCache>
-  </jai>
-  <xmlPostRequestLogBufferSize>1024</xmlPostRequestLogBufferSize>
-  <verbose>false</verbose>
-  <verboseExceptions>true</verboseExceptions>
+  <settings>
+    <id>GlobalSettingsInfoImpl-1</id>
+    <verbose>false</verbose>
+    <verboseExceptions>false</verboseExceptions>
+    <charset>UTF-8</charset>
+    <numDecimals>8</numDecimals>
+    <onlineResource>http://localhost:8080/geoserver</onlineResource>
+    <proxyBaseUrl>http://localhost:8080/geoserver</proxyBaseUrl>
+  </settings>
+  <logging>
+    <level>INFO</level>
+    <location>logs/geoserver.log</location>
+    <stdOutLogging>false</stdOutLogging>
+  </logging>
+  <featureTypeCacheSize>1000</featureTypeCacheSize>
+  <jvm>
+    <allowEnvironmentVariables>true</allowEnvironmentVariables>
+  </jvm>
 </global>
