@@ -10,44 +10,39 @@ ENV GEOSERVER_DATA_DIR=${GEOSERVER_HOME}/data_dir
 # Instalar wget e unzip
 RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/*
 
-# Garantir diretório limpo
+# Garantir diretórios limpos
 RUN rm -rf ${GEOSERVER_HOME} && mkdir -p ${GEOSERVER_HOME}
 
-# Descarregar WAR oficial do GeoServer
+# Descarregar e descompactar GeoServer WAR
 RUN wget -O /tmp/geoserver.zip https://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip/download && \
     unzip /tmp/geoserver.zip -d /tmp/geoserver && \
     mv /tmp/geoserver/geoserver.war /tmp/geoserver.war && \
-    rm -rf /tmp/geoserver /tmp/geoserver.zip
+    rm -rf /tmp/geoserver /tmp/geoserver.zip && \
+    unzip /tmp/geoserver.war -d ${GEOSERVER_HOME} && \
+    rm /tmp/geoserver.war
 
-# Descompactar WAR dentro do contexto geoserver
-RUN unzip /tmp/geoserver.war -d ${GEOSERVER_HOME} && rm /tmp/geoserver.war
-
-# Remover conteúdos pesados desnecessários (docs, demo)
+# Remover ficheiros pesados (documentação, demo)
 RUN rm -rf ${GEOSERVER_HOME}/doc ${GEOSERVER_HOME}/demo
 
-# Copiar o data_dir mínimo (com styles)
+# Copiar data_dir mínimo (já com styles, logs, security, etc.)
 COPY data_dir ${GEOSERVER_DATA_DIR}
 
-# ────────────────────────────────────────────────
-# Garantir permissões adequadas (evita erro 400)
-# ────────────────────────────────────────────────
+# Copiar web.xml para dentro de WEB-INF do Tomcat
+COPY data_dir/web-inf/web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
+
+# Garantir permissões adequadas (evita erro 400 e falhas de escrita)
 RUN chmod -R 777 ${GEOSERVER_DATA_DIR} && \
     chmod -R 755 ${GEOSERVER_HOME} && \
     chown -R root:root ${GEOSERVER_HOME}
 
-# ────────────────────────────────────────────────
 # Definir variáveis no contexto Tomcat
-# ────────────────────────────────────────────────
 ENV CATALINA_OPTS="-DGEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR} \
- -DGEOSERVER_PROJ_DATA_DIR=${GEOSERVER_DATA_DIR}/proj \
- -DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver"
+-DGEOSERVER_PROJ_DATA_DIR=${GEOSERVER_DATA_DIR}/proj \
+-DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver"
 
-# Expor porta padrão do Tomcat
+# Expor porta padrão
 EXPOSE 8080
 
-# Definir diretório de trabalho
+# Diretório de trabalho e arranque
 WORKDIR /usr/local/tomcat
-
-# Arrancar Tomcat
 CMD ["catalina.sh", "run"]
-
