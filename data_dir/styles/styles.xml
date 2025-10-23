@@ -1,7 +1,22 @@
 <styles>
   <style>
-    <id>default_point</id>
+    <id>StyleInfoImpl-1</id>
+    <name>default_line</name>
+    <filename>default_line.sld</filename>
+  </style>
+  <style>
+    <id>StyleInfoImpl-2</id>
     <name>default_point</name>
     <filename>default_point.sld</filename>
+  </style>
+  <style>
+    <id>StyleInfoImpl-3</id>
+    <name>default_polygon</name>
+    <filename>default_polygon.sld</filename>
+  </style>
+  <style>
+    <id>StyleInfoImpl-4</id>
+    <name>meu_estilo</name>
+    <filename>meu_estilo.sld</filename>
   </style>
 </styles>
