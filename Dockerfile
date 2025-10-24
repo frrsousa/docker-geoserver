@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------
-# 🌍 GeoServer personalizado (modo debug) para Render
+# 🌍 GeoServer personalizado para Render (modo debug)
 # Base: GeoServer 2.24.2 (Tomcat 9)
 # --------------------------------------------------------------------
 FROM docker.osgeo.org/geoserver:2.24.2
@@ -8,12 +8,12 @@ FROM docker.osgeo.org/geoserver:2.24.2
 # 🔧 Variáveis principais de ambiente
 # ---------------------------------------------------------
 ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver \
-    GEOSERVER_DATA_DIR=/usr/local/tomcat/webapps/geoserver/data_dir \
+    GEOSERVER_DATA_DIR=/opt/geoserver_data \
     PROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver \
     GEOSERVER_CSRF_DISABLED=true \
     DEFAULT_WORKSPACE=meu_workspace \
-    JAVA_OPTS="-Xms1024m -Xmx2048m -Djava.awt.headless=true \
-    -DGEOSERVER_LOG_LOCATION=/usr/local/tomcat/webapps/geoserver/data_dir/logs/geoserver.log \
+    JAVA_OPTS="-Xms512m -Xmx1024m -Djava.awt.headless=true \
+    -DGEOSERVER_LOG_LOCATION=/opt/geoserver_data/logs/geoserver.log \
     -DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver \
     -Dorg.geotools.util.logging.Logging.ALL=true \
     -Dorg.geoserver.logging.LoggingUtils.level=FINE \
@@ -24,9 +24,14 @@ ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver \
 # ---------------------------------------------------------
 # 📂 Copiar estrutura do GeoServer
 # ---------------------------------------------------------
-COPY data_dir/global.xml ${GEOSERVER_DATA_DIR}/global.xml
-COPY data_dir/workspaces ${GEOSERVER_DATA_DIR}/workspaces
-COPY data_dir/web ${GEOSERVER_DATA_DIR}/web
+# Data dir completo (inclui global.xml, workspaces, styles, logs)
+COPY data_dir ${GEOSERVER_DATA_DIR}
+
+# Interface de erros
+COPY data_dir/web/accessDenied.jsp ${GEOSERVER_DATA_DIR}/web/accessDenied.jsp
+
+# Configuração do Tomcat para web.xml
+COPY web-inf/web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
 
 # ---------------------------------------------------------
 # 🧰 Criar logs e permissões
