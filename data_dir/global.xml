@@ -5,23 +5,26 @@
     <verboseExceptions>false</verboseExceptions>
     <charset>UTF-8</charset>
     <numDecimals>6</numDecimals>
+
+    <!-- URL pública do teu GeoServer -->
     <onlineResource>https://docker-geoserver-qmk6.onrender.com/geoserver</onlineResource>
     <proxyBaseUrl>https://docker-geoserver-qmk6.onrender.com/geoserver</proxyBaseUrl>
   </settings>
 
   <logging>
+    <!-- Nivel reduzido de log para poupar memória -->
     <level>INFO</level>
     <location>logs/geoserver.log</location>
     <stdOutLogging>false</stdOutLogging>
   </logging>
 
-  <!-- Reduzir cache e carga de memória -->
+  <!-- Reduzir uso de memória do cache interno -->
   <featureTypeCacheSize>100</featureTypeCacheSize>
 
   <jvm>
     <allowEnvironmentVariables>true</allowEnvironmentVariables>
   </jvm>
 
-  <!-- Desativar criação automática de GWC cache -->
+  <!-- Desativar serviços globais automáticos e cache GWC -->
   <globalServices>false</globalServices>
 </global>
