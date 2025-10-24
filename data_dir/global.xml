@@ -5,8 +5,8 @@
     <verboseExceptions>false</verboseExceptions>
     <charset>UTF-8</charset>
     <numDecimals>8</numDecimals>
-    <onlineResource>https://docker-geoserver-qmk6.onrender.com/geoserver</onlineResource>
-    <proxyBaseUrl>https://docker-geoserver-qmk6.onrender.com/geoserver</proxyBaseUrl>
+    <onlineResource>https://docker-geoserver-production.up.railway.app/geoserver</onlineResource>
+    <proxyBaseUrl>https://docker-geoserver-production.up.railway.app/geoserver</proxyBaseUrl>
   </settings>
   <logging>
     <level>INFO</level>
