@@ -1,35 +1,50 @@
-# ---------------------------------------------------------------------
-# Dockerfile otimizado e compatível com Render (GeoServer 2.24.2)
-# Corrige erro: "/geoserver_data": not found
-# ---------------------------------------------------------------------
-
+# --------------------------------------------------------------------
+# 🌍 GeoServer personalizado (modo debug) para Render
+# Base: GeoServer 2.24.2 (Tomcat 9)
+# --------------------------------------------------------------------
 FROM docker.osgeo.org/geoserver:2.24.2
 
-# Diretórios principais
-ENV GEOSERVER_HOME=/opt/geoserver \
-    GEOSERVER_DATA_DIR=/opt/geoserver_data \
-    GEOWEBCACHE_CACHE_DIR=/opt/geoserver_data/gwc
+# ---------------------------------------------------------
+# 🔧 Variáveis principais de ambiente
+# ---------------------------------------------------------
+ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver \
+    GEOSERVER_DATA_DIR=/usr/local/tomcat/webapps/geoserver/data_dir \
+    PROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver \
+    GEOSERVER_CSRF_DISABLED=true \
+    DEFAULT_WORKSPACE=meu_workspace \
+    JAVA_OPTS="-Xms1024m -Xmx2048m -Djava.awt.headless=true \
+    -DGEOSERVER_LOG_LOCATION=/usr/local/tomcat/webapps/geoserver/data_dir/logs/geoserver.log \
+    -DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver \
+    -Dorg.geotools.util.logging.Logging.ALL=true \
+    -Dorg.geoserver.logging.LoggingUtils.level=FINE \
+    -DGEOSERVER_CSRF_DISABLED=true \
+    -DGEOSERVER_VERBOSE=true \
+    -DGEOSERVER_LOG_STDOUT=true"
 
-# Ajuste de memória e desempenho (máx. 384 MB Heap)
-ENV JAVA_OPTS="-Xms128m -Xmx384m -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -Duser.timezone=UTC -Djava.awt.headless=true"
+# ---------------------------------------------------------
+# 📂 Copiar estrutura do GeoServer
+# ---------------------------------------------------------
+# Pasta principal de dados e workspace
+COPY data_dir ${GEOSERVER_DATA_DIR}
 
-# Cria diretório de dados (caso não exista)
-RUN mkdir -p /opt/geoserver_data && chmod -R 777 /opt/geoserver_data
+# Interface e permissões
+COPY data_dir/web/accessDenied.jsp ${GEOSERVER_DATA_DIR}/web/accessDenied.jsp
+COPY data_dir/web-inf/web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
 
-# Copia ficheiros apenas se existirem no contexto
-# (isto evita o erro 'checksum not found' no Render)
-COPY ./geoserver_data/ /opt/geoserver_data/ || true
+# ---------------------------------------------------------
+# 🧰 Criar logs e permissões
+# ---------------------------------------------------------
+RUN mkdir -p ${GEOSERVER_DATA_DIR}/logs && \
+    touch ${GEOSERVER_DATA_DIR}/logs/geoserver.log && \
+    chmod -R 777 ${GEOSERVER_DATA_DIR} && \
+    chmod -R 755 ${GEOSERVER_HOME}
 
-# Cria ficheiro global.xml se não for fornecido
-RUN if [ ! -f /opt/geoserver_data/global.xml ]; then \
-    echo '<global><settings><id>GlobalSettingsInfoImpl-1</id><verbose>false</verbose><verboseExceptions>false</verboseExceptions><charset>UTF-8</charset><numDecimals>6</numDecimals><onlineResource>https://docker-geoserver-qmk6.onrender.com/geoserver</onlineResource><proxyBaseUrl>https://docker-geoserver-qmk6.onrender.com/geoserver</proxyBaseUrl></settings><logging><level>INFO</level><location>logs/geoserver.log</location><stdOutLogging>false</stdOutLogging></logging><featureTypeCacheSize>100</featureTypeCacheSize><jvm><allowEnvironmentVariables>true</allowEnvironmentVariables></jvm><globalServices>false</globalServices></global>' > /opt/geoserver_data/global.xml; \
-    fi
-
-# Permissões completas para evitar erro de escrita
-RUN chmod -R 777 /opt/geoserver_data
-
-# Expor porta padrão
+# ---------------------------------------------------------
+# 🌐 Porta padrão
+# ---------------------------------------------------------
 EXPOSE 8080
 
-# Comando padrão
+# ---------------------------------------------------------
+# 🚀 Arranque do GeoServer
+# ---------------------------------------------------------
 CMD ["catalina.sh", "run"]
