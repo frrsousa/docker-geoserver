@@ -1,21 +1,25 @@
+# ---------------------------------------------------------------------
+# Dockerfile otimizado para GeoServer 2.24.2 em ambiente Render (512 MB RAM)
+# ---------------------------------------------------------------------
+
 FROM docker.osgeo.org/geoserver:2.24.2
 
-# Definir variáveis de ambiente básicas
+# Diretórios principais
 ENV GEOSERVER_HOME=/opt/geoserver \
     GEOSERVER_DATA_DIR=/opt/geoserver_data \
-    GEOWEBCACHE_CACHE_DIR=/opt/geoserver_data/gwc \
-    JAVA_OPTS="-Xms128m -Xmx384m -XX:+UseG1GC -Duser.timezone=UTC -Djava.awt.headless=true"
+    GEOWEBCACHE_CACHE_DIR=/opt/geoserver_data/gwc
 
-# Copiar o diretório de dados (se existir no repositório)
+# Ajuste de memória e desempenho (máx. 384 MB Heap)
+ENV JAVA_OPTS="-Xms128m -Xmx384m -XX:+UseG1GC -XX:+UnlockExperimentalVMOptions -XX:G1NewSizePercent=20 -XX:G1MaxNewSizePercent=40 -Duser.timezone=UTC -Djava.awt.headless=true"
+
+# Copiar o diretório de dados (deve conter global.xml, web.xml, etc.)
 COPY geoserver_data/ /opt/geoserver_data/
 
-# Garantir permissões adequadas
+# Permissões completas para evitar erro de escrita no Render
 RUN chmod -R 777 /opt/geoserver_data
 
-# Expor a porta padrão do GeoServer
+# Expor porta padrão
 EXPOSE 8080
 
-# Iniciar o GeoServer
+# Comando para iniciar o Tomcat com GeoServer
 CMD ["catalina.sh", "run"]
-
-
