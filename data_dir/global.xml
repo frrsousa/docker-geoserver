@@ -1,4 +1,4 @@
-<global>
+<global>  
   <settings>
     <id>GlobalSettingsInfoImpl-1</id>
     <verbose>false</verbose>
@@ -9,15 +9,12 @@
     <onlineResource>https://docker-geoserver-qmk6.onrender.com/geoserver</onlineResource>
     <proxyBaseUrl>https://docker-geoserver-qmk6.onrender.com/geoserver</proxyBaseUrl>
   </settings>
-
   <logging>
     <level>INFO</level>
     <location>logs/geoserver.log</location>
     <stdOutLogging>false</stdOutLogging>
   </logging>
-
   <featureTypeCacheSize>1000</featureTypeCacheSize>
-
   <jvm>
     <allowEnvironmentVariables>true</allowEnvironmentVariables>
   </jvm>
