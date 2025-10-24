@@ -21,6 +21,11 @@
     </context-param>
 
     <context-param>
+        <param-name>GEOSERVER_CSRF_DISABLED</param-name>
+        <param-value>true</param-value>
+    </context-param>
+
+    <context-param>
         <param-name>serviceStrategy</param-name>
         <param-value>PARTIAL-BUFFER2</param-value>
     </context-param>
@@ -209,6 +214,7 @@
         <location>/web/accessDenied.jsp</location>
     </error-page>
 
+    <!-- ==================== MIME TYPES ==================== -->
     <mime-mapping>
         <extension>xsl</extension>
         <mime-type>text/xml</mime-type>
@@ -230,3 +236,4 @@
         <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 </web-app>
+
