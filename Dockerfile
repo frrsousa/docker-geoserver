@@ -1,5 +1,5 @@
 # --------------------------------------------------------------------
-# 🌍 GeoServer personalizado (modo debug) para Render
+# 🌍 GeoServer personalizado para Render
 # Base: GeoServer 2.24.2 (Tomcat 9)
 # --------------------------------------------------------------------
 FROM docker.osgeo.org/geoserver:2.24.2
@@ -13,24 +13,25 @@ ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver \
     GEOSERVER_CSRF_DISABLED=true \
     DEFAULT_WORKSPACE=meu_workspace \
     JAVA_OPTS="-Xms512m -Xmx1024m -Djava.awt.headless=true \
-    -DGEOSERVER_LOG_LOCATION=${GEOSERVER_DATA_DIR}/logs/geoserver.log \
+    -DGEOSERVER_LOG_LOCATION=/usr/local/tomcat/webapps/geoserver/data_dir/logs/geoserver.log \
+    -DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver \
     -Dorg.geotools.util.logging.Logging.ALL=true \
     -Dorg.geoserver.logging.LoggingUtils.level=FINE \
+    -DGEOSERVER_CSRF_DISABLED=true \
     -DGEOSERVER_VERBOSE=true \
     -DGEOSERVER_LOG_STDOUT=true"
 
 # ---------------------------------------------------------
 # 📂 Copiar estrutura do GeoServer
 # ---------------------------------------------------------
-# Pasta principal de dados, workspaces e estilos
 COPY data_dir ${GEOSERVER_DATA_DIR}
 
-# Ficheiros adicionais de interface
+# Copiar interface web e permissões
 COPY data_dir/web/accessDenied.jsp ${GEOSERVER_DATA_DIR}/web/accessDenied.jsp
 COPY web-inf/web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
 
 # ---------------------------------------------------------
-# 🧰 Criar logs e definir permissões corretas
+# 🧰 Criar logs e definir permissões
 # ---------------------------------------------------------
 RUN mkdir -p ${GEOSERVER_DATA_DIR}/logs && \
     touch ${GEOSERVER_DATA_DIR}/logs/geoserver.log && \
@@ -46,3 +47,4 @@ EXPOSE 8080
 # 🚀 Arranque do GeoServer
 # ---------------------------------------------------------
 CMD ["catalina.sh", "run"]
+
