@@ -1,63 +1,44 @@
-# ────────────────────────────────────────────────
-# GeoServer Lite – otimizado para Render (512 MB)
-# ────────────────────────────────────────────────
-FROM tomcat:9.0.111-jdk17
+# Imagem base oficial do GeoServer
+FROM docker.osgeo.org/geoserver:2.24.2
 
-# ────────────────────────────────────────────────
-# Versão e diretórios
-# ────────────────────────────────────────────────
-ENV GEOSERVER_VERSION=2.24.2
-ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver
+# =========================
+# VARIÁVEIS DE AMBIENTE
+# =========================
+ENV GEOSERVER_HOME=/opt/geoserver
 ENV GEOSERVER_DATA_DIR=${GEOSERVER_HOME}/data_dir
 ENV PROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver
+ENV GEOSERVER_LOG_LOCATION=${GEOSERVER_DATA_DIR}/logs/geoserver.log
+ENV JAVA_OPTS="-Xms512m -Xmx1024m -Djava.awt.headless=true -Dfile.encoding=UTF-8"
 
-# ────────────────────────────────────────────────
-# Instalar wget e unzip
-# ────────────────────────────────────────────────
-RUN apt-get update && apt-get install -y wget unzip && rm -rf /var/lib/apt/lists/*
+# =========================
+# COPIAR CONFIGURAÇÕES
+# =========================
 
-# ────────────────────────────────────────────────
-# Preparar diretório GeoServer
-# ────────────────────────────────────────────────
-RUN rm -rf ${GEOSERVER_HOME} && mkdir -p ${GEOSERVER_HOME}
-
-# ────────────────────────────────────────────────
-# Descarregar e instalar WAR do GeoServer
-# ────────────────────────────────────────────────
-RUN wget -O /tmp/geoserver.zip https://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip/download && \
-    unzip /tmp/geoserver.zip -d /tmp/geoserver && \
-    mv /tmp/geoserver/geoserver.war /tmp/geoserver.war && \
-    rm -rf /tmp/geoserver /tmp/geoserver.zip
-
-RUN unzip /tmp/geoserver.war -d ${GEOSERVER_HOME} && rm /tmp/geoserver.war
-
-# ────────────────────────────────────────────────
-# Remover conteúdos pesados desnecessários
-# ────────────────────────────────────────────────
-RUN rm -rf ${GEOSERVER_HOME}/doc ${GEOSERVER_HOME}/demo
-
-# ────────────────────────────────────────────────
-# Copiar data_dir mínimo (já deve conter logs, workspaces e styles)
-# ────────────────────────────────────────────────
+# Copia a pasta de dados local (data_dir)
 COPY data_dir ${GEOSERVER_DATA_DIR}
 
-# ────────────────────────────────────────────────
-# Variáveis de contexto Tomcat
-# ────────────────────────────────────────────────
-ENV CATALINA_OPTS="-DGEOSERVER_DATA_DIR=${GEOSERVER_DATA_DIR} -DGEOSERVER_PROJ_DATA_DIR=${GEOSERVER_DATA_DIR}/proj -DPROXY_BASE_URL=${PROXY_BASE_URL}"
+# Copia o ficheiro web.xml atualizado para o local correto
+COPY data_dir/web/web.xml ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/web.xml
 
-# ────────────────────────────────────────────────
-# Expor porta padrão do Tomcat
-# ────────────────────────────────────────────────
+# Copia a página accessDenied.jsp (deve estar em data_dir/web/)
+COPY data_dir/web/accessDenied.jsp ${GEOSERVER_DATA_DIR}/web/accessDenied.jsp
+
+# =========================
+# PERMISSÕES E CONFIGURAÇÃO
+# =========================
+
+# Garante permissões adequadas (Render pode usar utilizador restrito)
+RUN chmod -R 755 ${GEOSERVER_HOME} && \
+    chmod -R 755 ${GEOSERVER_DATA_DIR} && \
+    mkdir -p ${GEOSERVER_DATA_DIR}/logs && \
+    touch ${GEOSERVER_DATA_DIR}/logs/geoserver.log && \
+    chown -R root:root ${GEOSERVER_HOME} ${GEOSERVER_DATA_DIR}
+
+# =========================
+# PORTA E STARTUP
+# =========================
+
 EXPOSE 8080
 
-# ────────────────────────────────────────────────
-# Diretório de trabalho
-# ────────────────────────────────────────────────
-WORKDIR /usr/local/tomcat
-
-# ────────────────────────────────────────────────
-# Iniciar Tomcat
-# ────────────────────────────────────────────────
+# Comando de inicialização
 CMD ["catalina.sh", "run"]
-
