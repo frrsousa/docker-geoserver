@@ -1,44 +1,32 @@
-# Imagem base oficial do GeoServer
+# --------------------------------------------------------------------
+# 🛰️ GeoServer personalizado para Render
+# Versão estável baseada em 2.24.2 (testada e funcional no Render)
+# --------------------------------------------------------------------
 FROM docker.osgeo.org/geoserver:2.24.2
 
-# =========================
-# VARIÁVEIS DE AMBIENTE
-# =========================
-ENV GEOSERVER_HOME=/opt/geoserver
-ENV GEOSERVER_DATA_DIR=${GEOSERVER_HOME}/data_dir
-ENV PROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver
-ENV GEOSERVER_LOG_LOCATION=${GEOSERVER_DATA_DIR}/logs/geoserver.log
-ENV JAVA_OPTS="-Xms512m -Xmx1024m -Djava.awt.headless=true -Dfile.encoding=UTF-8"
+# Define variáveis de ambiente
+ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver \
+    GEOSERVER_DATA_DIR=/usr/local/tomcat/webapps/geoserver/data_dir \
+    PROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver \
+    GEOSERVER_CSRF_DISABLED=true
 
-# =========================
-# COPIAR CONFIGURAÇÕES
-# =========================
-
-# Copia a pasta de dados local (data_dir)
+# Copia o data_dir completo
 COPY data_dir ${GEOSERVER_DATA_DIR}
 
-# Copia o ficheiro web.xml atualizado para o local correto
-COPY data_dir/web/web.xml ${GEOSERVER_HOME}/webapps/geoserver/WEB-INF/web.xml
-
-# Copia a página accessDenied.jsp (deve estar em data_dir/web/)
+# Copia os ficheiros da interface web
 COPY data_dir/web/accessDenied.jsp ${GEOSERVER_DATA_DIR}/web/accessDenied.jsp
+COPY data_dir/web-inf/web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
 
-# =========================
-# PERMISSÕES E CONFIGURAÇÃO
-# =========================
-
-# Garante permissões adequadas (Render pode usar utilizador restrito)
-RUN chmod -R 755 ${GEOSERVER_HOME} && \
-    chmod -R 755 ${GEOSERVER_DATA_DIR} && \
+# Define permissões para o GeoServer poder escrever no diretório
+RUN chmod -R 777 ${GEOSERVER_DATA_DIR} && \
     mkdir -p ${GEOSERVER_DATA_DIR}/logs && \
-    touch ${GEOSERVER_DATA_DIR}/logs/geoserver.log && \
-    chown -R root:root ${GEOSERVER_HOME} ${GEOSERVER_DATA_DIR}
+    chmod -R 777 ${GEOSERVER_DATA_DIR}/logs
 
-# =========================
-# PORTA E STARTUP
-# =========================
+# Define o workspace padrão (meu_workspace)
+ENV DEFAULT_WORKSPACE=meu_workspace
 
+# Exposição da porta do Tomcat
 EXPOSE 8080
 
-# Comando de inicialização
+# Inicia o GeoServer
 CMD ["catalina.sh", "run"]
