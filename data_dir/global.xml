@@ -1,12 +1,13 @@
-<global>
+<global> 
   <settings>
     <id>GlobalSettingsInfoImpl-1</id>
     <verbose>false</verbose>
     <verboseExceptions>false</verboseExceptions>
     <charset>UTF-8</charset>
     <numDecimals>8</numDecimals>
-    <onlineResource>http://localhost:8080/geoserver</onlineResource>
-    <proxyBaseUrl>http://localhost:8080/geoserver</proxyBaseUrl>
+    <!-- URL pública do GeoServer -->
+    <onlineResource>https://docker-geoserver-qmk6.onrender.com/geoserver</onlineResource>
+    <proxyBaseUrl>https://docker-geoserver-qmk6.onrender.com/geoserver</proxyBaseUrl>
   </settings>
   <logging>
     <level>INFO</level>
