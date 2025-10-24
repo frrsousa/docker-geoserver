@@ -1,21 +1,27 @@
-<global> 
+<global>
   <settings>
     <id>GlobalSettingsInfoImpl-1</id>
     <verbose>false</verbose>
     <verboseExceptions>false</verboseExceptions>
     <charset>UTF-8</charset>
-    <numDecimals>8</numDecimals>
-    <!-- URL pública do GeoServer -->
+    <numDecimals>6</numDecimals>
     <onlineResource>https://docker-geoserver-qmk6.onrender.com/geoserver</onlineResource>
     <proxyBaseUrl>https://docker-geoserver-qmk6.onrender.com/geoserver</proxyBaseUrl>
   </settings>
+
   <logging>
     <level>INFO</level>
     <location>logs/geoserver.log</location>
     <stdOutLogging>false</stdOutLogging>
   </logging>
-  <featureTypeCacheSize>1000</featureTypeCacheSize>
+
+  <!-- Reduzir cache e carga de memória -->
+  <featureTypeCacheSize>100</featureTypeCacheSize>
+
   <jvm>
     <allowEnvironmentVariables>true</allowEnvironmentVariables>
   </jvm>
+
+  <!-- Desativar criação automática de GWC cache -->
+  <globalServices>false</globalServices>
 </global>
