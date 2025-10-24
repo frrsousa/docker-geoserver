@@ -12,7 +12,7 @@ ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver \
     PROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver \
     GEOSERVER_CSRF_DISABLED=true \
     DEFAULT_WORKSPACE=meu_workspace \
-    JAVA_OPTS="-Xms1g -Xmx2g -Djava.awt.headless=true \
+    JAVA_OPTS="-Xms1024m -Xmx2048m -Djava.awt.headless=true \
     -DGEOSERVER_LOG_LOCATION=/usr/local/tomcat/webapps/geoserver/data_dir/logs/geoserver.log \
     -DPROXY_BASE_URL=https://docker-geoserver-qmk6.onrender.com/geoserver \
     -Dorg.geotools.util.logging.Logging.ALL=true \
@@ -24,12 +24,9 @@ ENV GEOSERVER_HOME=/usr/local/tomcat/webapps/geoserver \
 # ---------------------------------------------------------
 # 📂 Copiar estrutura do GeoServer
 # ---------------------------------------------------------
-# Pasta principal de dados e workspace
-COPY data_dir ${GEOSERVER_DATA_DIR}
-
-# Interface e permissões
-COPY data_dir/web/accessDenied.jsp ${GEOSERVER_DATA_DIR}/web/accessDenied.jsp
-COPY web-inf/web.xml ${GEOSERVER_HOME}/WEB-INF/web.xml
+COPY data_dir/global.xml ${GEOSERVER_DATA_DIR}/global.xml
+COPY data_dir/workspaces ${GEOSERVER_DATA_DIR}/workspaces
+COPY data_dir/web ${GEOSERVER_DATA_DIR}/web
 
 # ---------------------------------------------------------
 # 🧰 Criar logs e permissões
